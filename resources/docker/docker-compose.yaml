@@ -1,0 +1,19 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+    rumour_spreading_mongo:
+        container_name: rumour_spreading_mongo
+        image: mongo:latest
+        restart: always
+        volumes:
+            - ../datasets:/data/datasets
+            - ./mongo/data:/data/db
+            - ./mongo/init.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: 1234
+            MONGO_INITDB_DATABASE: rumour_tweet
