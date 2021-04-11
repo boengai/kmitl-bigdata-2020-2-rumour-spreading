@@ -1,0 +1,6 @@
+# macOS Files
+.DS_Store
+
+# persistence folder
+resources/datasets/*
+resources/docker/mongo/data/*
