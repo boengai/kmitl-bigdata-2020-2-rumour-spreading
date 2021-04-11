@@ -24,6 +24,14 @@ mongo ${MONGO_INITDB_DATABASE} \
 mongoimport -d ${MONGO_INITDB_DATABASE} -c tweets --file ${DATASETTWEETS} --jsonArray
 rm -f ${DATASETTWEETS}
 
+# update annotations
+mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
+  db.tweets.find().forEach(t => {
+    const annoFile = cat('${DATASETDIR}/'+t.id_str+'/annotation.json')
+    const annoJson = JSON.parse(annoFile)
+    db.tweets.update({ _id: t._id }, { \$set: { "annotations": annoJson }})
+  })
+EOF
 echo "************************************************************"
 echo "************************************************************"
 echo "************************************************************"
