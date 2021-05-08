@@ -7,12 +7,21 @@ networks:
 services:
     rumour_spreading_mongo:
         container_name: rumour_spreading_mongo
-        image: mongo:latest
+        build: 
+            context: .
+            dockerfile: ./mongo/Dockerfile
+            args:
+                # there are many rumour topics in zip file that will be download in Dockerfile
+                # can choose with this list
+                # charliehebdo, ebola-essien, ferguson, germanwings-crash, ottawashooting, prince-toronto, putinmissing, sydneysiege
+                # if would like to change this value need to run `up --build` once, for re-build docker image
+                RUMOUR_TOPIC: ottawashooting
         restart: always
         volumes:
-            - ../datasets:/data/datasets
+            # persistant location
             - ./mongo/data:/data/db
-            - ./mongo/init.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+            # init script
+            - ./mongo/init.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro 
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: 1234

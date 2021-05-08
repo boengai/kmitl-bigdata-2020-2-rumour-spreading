@@ -1,11 +1,13 @@
-DOCKER_PATH := resources/docker
+RESOURCES_PATH := ./resources
+DOCKER_PATH := ${RESOURCES_PATH}/docker
 DOCKER_COMPOSE_FILE := -f ${DOCKER_PATH}/docker-compose.yaml
+MONGO_PATH := ${DOCKER_PATH}/mongo
 
 up: down
-	docker-compose ${DOCKER_COMPOSE_FILE} up 
-	
-up/db: down
-	docker-compose ${DOCKER_COMPOSE_FILE} up rumour_spreading_mongo
+	docker-compose ${DOCKER_COMPOSE_FILE} up
+
+up/rebuild: down reset
+	docker-compose ${DOCKER_COMPOSE_FILE} up --build
 
 down:
 	docker-compose ${DOCKER_COMPOSE_FILE} down --remove-orphans
@@ -19,4 +21,4 @@ exec/mongo:
 reset: down cleanup/persistence
 	
 cleanup/persistence:
-	sudo rm -rf ./${DOCKER_PATH}/mongo/data/
+	sudo rm -rf ${MONGO_PATH}/data/
