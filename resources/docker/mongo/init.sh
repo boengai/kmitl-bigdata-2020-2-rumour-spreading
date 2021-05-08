@@ -20,6 +20,7 @@ mongo ${MONGO_INITDB_DATABASE} \
         -p ${MONGO_INITDB_ROOT_PASSWORD} \
         --authenticationDatabase admin \
         --eval "db.createUser({user: '${MONGO_INITDB_ROOT_USERNAME}', pwd: '${MONGO_INITDB_ROOT_PASSWORD}', roles:[{role:'dbOwner', db: '${MONGO_INITDB_DATABASE}'}]});"
+        
 # import tweets
 mongoimport -d ${MONGO_INITDB_DATABASE} -c tweets --file ${DATASETTWEETS} --jsonArray
 rm -f ${DATASETTWEETS}
