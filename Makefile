@@ -1,6 +1,6 @@
 RESOURCES_PATH := ./resources
 DOCKER_PATH := ${RESOURCES_PATH}/docker
-DOCKER_COMPOSE_FILE := -f ${DOCKER_PATH}/docker-compose.yaml
+DOCKER_COMPOSE_FILE := -f ${DOCKER_PATH}/docker-compose.yaml --env-file ./.env
 MONGO_PATH := ${DOCKER_PATH}/mongo
 
 up: down

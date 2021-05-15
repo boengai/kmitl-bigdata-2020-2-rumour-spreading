@@ -26,3 +26,4 @@ services:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: 1234
             MONGO_INITDB_DATABASE: rumour_tweet
+            MONGO_ATLAS_URI: mongodb+srv://${MONGO_ATLAS_USERNAME}:${MONGO_ATLAS_PASSWORD}@${MONGO_ATLAS_CLUSTER}.mongodb.net
