@@ -4,3 +4,6 @@
 # persistence folder
 resources/datasets/*
 resources/docker/mongo/data/*
+
+# env
+.env
