@@ -28,9 +28,33 @@ rm -f ${DATASETTWEETS}
 # update annotations
 mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
   db.tweets.find().forEach(t => {
-    const annoFile = cat('${DATASETDIR}/'+t.id_str+'/annotation.json')
-    const annoJson = JSON.parse(annoFile)
+    const annoJson = JSON.parse(cat('${DATASETDIR}/'+t.id_str+'/annotation.json'))
     db.tweets.update({ _id: t._id }, { \$set: { "annotations": annoJson }})
+  })
+EOF
+
+# structure to reaction
+mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
+  const destructor = (tweetHostID, structure) => {
+    return Object.keys(structure).reduce((acc, cur) => {
+      const reactionJSON = JSON.parse(cat('${DATASETDIR}/'+tweetHostID+'/reactions/'+cur+'.json'))
+
+      const reaction = { ...reactionJSON, reply: null }
+
+      if (structure[cur].length != 0) {
+          reaction.reply = destructor(tweetHostID, structure[cur])
+      }
+
+      acc.push(reaction)
+
+      return acc
+    }, [])
+  }
+
+  db.tweets.find().forEach(t => {
+    const structureJSON = JSON.parse(cat('${DATASETDIR}/'+t.id_str+'/structure.json'))
+
+    db.reactions.insert({id_str: t.id_str, reply: destructor(t.id_str, structureJSON[t.id_str])})
   })
 EOF
 echo "************************************************************"
