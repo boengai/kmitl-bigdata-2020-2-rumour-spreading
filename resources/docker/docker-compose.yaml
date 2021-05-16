@@ -15,7 +15,7 @@ services:
                 # can choose with this list
                 # charliehebdo, ebola-essien, ferguson, germanwings-crash, ottawashooting, prince-toronto, putinmissing, sydneysiege
                 # if would like to change this value need to run `up --build` once, for re-build docker image
-                RUMOUR_TOPIC: ottawashooting
+                RUMOUR_TOPIC: ${RUMOUR_TOPIC}
         restart: always
         volumes:
             # persistant location
@@ -23,7 +23,6 @@ services:
             # init script
             - ./mongo/init.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro 
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: 1234
-            MONGO_INITDB_DATABASE: rumour_tweet
-            MONGO_ATLAS_URI: mongodb+srv://${MONGO_ATLAS_USERNAME}:${MONGO_ATLAS_PASSWORD}@${MONGO_ATLAS_CLUSTER}.mongodb.net
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
