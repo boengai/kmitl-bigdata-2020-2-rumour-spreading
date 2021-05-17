@@ -20,7 +20,9 @@ logs:
 	docker-compose ${DOCKER_COMPOSE_FILE} logs -f
 
 exec/mongo:
-	docker exec -it rumour_spreading_mongo bash
+	docker exec -it rumour_spreading_mongo bash  -c "\
+		mongo -u ${MONGO_ROOT_USERNAME} -p ${MONGO_ROOT_PASSWORD} -- ${MONGO_DATABASE} \
+	"
 
 reset: down cleanup/persistence
 	
