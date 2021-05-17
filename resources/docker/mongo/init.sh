@@ -25,7 +25,7 @@ mongo ${MONGO_INITDB_DATABASE} \
 mongoimport -d ${MONGO_INITDB_DATABASE} -c tweets --file ${DATASETTWEETS} --jsonArray
 rm -f ${DATASETTWEETS}
 
-# update annotations
+# update tweets.annotations
 mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
   db.tweets.find().forEach(t => {
     const annoJson = JSON.parse(cat('${DATASETDIR}/'+t.id_str+'/annotation.json'))
@@ -33,7 +33,17 @@ mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONG
   })
 EOF
 
-# structure to reaction
+# insert retweets
+mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
+  db.tweets.find().forEach(t => {
+    const retweetsJson = JSON.parse('['+cat('${DATASETDIR}/'+t.id_str+'/retweets.json').replace(/(})(?:\r\n|\r|\n)({)/g, '},{')+']').filter(r => r.id_str != t.id_str)
+    if(retweetsJson.length > 0) {
+      db.retweets.insert(retweetsJson)
+    }
+  })
+EOF
+
+# insert reactions
 mongo -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} -- $MONGO_INITDB_DATABASE <<EOF
   const destructor = (tweetHostID, structure) => {
     return Object.keys(structure).reduce((acc, cur) => {
